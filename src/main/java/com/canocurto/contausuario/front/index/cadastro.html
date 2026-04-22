@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <title>Cadastro</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" 
+    content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:;">
+
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+
+    <h1 id="h1login">Cadastrar-se</h1>
+        <form name="formulario" id="form">
+            <!--         -->
+            <fieldset id ="field">
+                <div id="divDados">
+
+                    <input type="text" name="nomeUsuario" required class="dados" placeholder="Nome de Usuário"><br><br>
+                    
+                    <input type="email" name="email" required class="dados" placeholder="Email"><br><br>
+                
+                    <input type="password" name="senha" required class="dados" placeholder="Senha"><br><br>
+                                        
+                    <span id="erro"></span>
+                    
+                    <input type="submit" id="registrar"name="enviar" value="REGISTRAR"><br>
+                    <a href="login.html"> Já tem uma conta? fazer login</a>
+            </fieldset>
+
+        </form>
+
+    <script src="../cadastrar.js"></script>
+</body>
+</html>
