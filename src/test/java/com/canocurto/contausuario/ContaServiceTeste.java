@@ -7,10 +7,12 @@ import static org.mockito.Mockito.*;
 
 import java.util.Optional;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.boot.diagnostics.FailureAnalyzer;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -21,6 +23,9 @@ import com.canocurto.contausuario.repository.ContaUsuarioRepository;
 import com.canocurto.contausuario.service.ContaService;
 
 class ContaServiceTeste {
+
+    FazerCadastro dadosCadastro;
+    FazerLogin dadosLogin;
     
     @Mock
     private ContaUsuarioRepository contaRepository;
@@ -32,15 +37,24 @@ class ContaServiceTeste {
         MockitoAnnotations.openMocks(this);
     }
 
+    @BeforeEach
+    void beforeEachMetodo() {
+
+        dadosCadastro = new FazerCadastro("leo", "leo@kee", "leo42424");
+
+        dadosLogin = new FazerLogin("leo@gmail", "3322");
+        
+    }
+
+
     @Test
     void deveRetornaExecaoAoVerificarOEmail() {
 
-        var dados = new FazerCadastro("leo", "leo@kee", "leo42424");
 
-        when(contaRepository.existsByEmail(dados.email())).thenReturn(true);
+        when(contaRepository.existsByEmail(dadosCadastro.email())).thenReturn(true);
 
         assertThrows(IllegalArgumentException.class, () -> {
-            contaService.cadastrar(dados);
+            contaService.cadastrar(dadosCadastro);
         });
 
         verify(contaRepository, never()).save(any());
@@ -48,11 +62,10 @@ class ContaServiceTeste {
     @Test
     void deverSalvaraContaAoVerificarOEmail() {
 
-        var dados = new FazerCadastro("leo", "leo@kee", "leo42424");
 
-        when(contaRepository.existsByEmail(dados.email())).thenReturn(false);
+        when(contaRepository.existsByEmail(dadosCadastro.email())).thenReturn(false);
 
-        contaService.cadastrar(dados);
+        contaService.cadastrar(dadosCadastro);
 
         verify(contaRepository).save(any(ContaUsuario.class));
     }
@@ -60,26 +73,25 @@ class ContaServiceTeste {
     @Test
     void deveRetornar401QuandoLoginInvalido() {
 
-        var dados = new FazerLogin("leo@gmail", "3322");
 
-        when(contaRepository.findByEmail(dados.email())).thenReturn(Optional.empty());
+        when(contaRepository.findByEmail(dadosLogin.email())).thenReturn(Optional.empty());
         
-        ResponseEntity<?> response = contaService.login(dados);
+        ResponseEntity<?> response = contaService.login(dadosLogin);
 
         assertEquals(HttpStatus.UNAUTHORIZED , response.getStatusCode());
 
 
     }
+    @Test
     void deveRetornar401QuandoSenhaInvalida() {
 
-        var dados = new FazerLogin("leo@gmail", "3322");
-         var conta = new ContaUsuario();
+        var conta = new ContaUsuario();
         conta.setEmail("leo@gmail");
         conta.setSenha("0000");
 
-        when(contaRepository.findByEmail(dados.email())).thenReturn(Optional.of(conta));
+        when(contaRepository.findByEmail(dadosLogin.email())).thenReturn(Optional.of(conta));
         
-        ResponseEntity<?> response = contaService.login(dados);
+        ResponseEntity<?> response = contaService.login(dadosLogin);
 
         assertEquals(HttpStatus.UNAUTHORIZED , response.getStatusCode());
 
@@ -88,14 +100,13 @@ class ContaServiceTeste {
     @Test
     void deveContinuarQuandoLoginValido() {
 
-        var dados = new FazerLogin("leo@gmail", "3322");
         var conta = new ContaUsuario();
         conta.setEmail("leo@gmail");
         conta.setSenha("3322");
 
-        when(contaRepository.findByEmail(dados.email())).thenReturn(Optional.of(conta));
+        when(contaRepository.findByEmail(dadosLogin.email())).thenReturn(Optional.of(conta));
         
-        ResponseEntity<?> response = contaService.login(dados);
+        ResponseEntity<?> response = contaService.login(dadosLogin);
 
         assertEquals(HttpStatus.OK , response.getStatusCode());
 
