@@ -1,8 +1,11 @@
 package com.canocurto.contausuario.service;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.canocurto.contausuario.dto.DetalhaCadastro;
 import com.canocurto.contausuario.dto.FazerCadastro;
 import com.canocurto.contausuario.dto.FazerLogin;
 import com.canocurto.contausuario.entity.ContaUsuario;
@@ -50,6 +53,13 @@ public class ContaService {
         }
 
         return ResponseEntity.ok().build();
+    }
+
+    public ResponseEntity<List<DetalhaCadastro>> listar() {
+         var lista = contaRepository.findAll().stream().map(DetalhaCadastro:: new).toList();
+
+        return ResponseEntity.ok(lista);
+       
     }
     
 }
