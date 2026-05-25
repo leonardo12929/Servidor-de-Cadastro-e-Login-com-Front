@@ -54,7 +54,7 @@ public class ContaUsuarioController {
         return contaService.login(dados);
     }
     
-    @GetMapping 
+    @GetMapping("/lista") 
     public ResponseEntity<List<DetalhaCadastro>> listar() {
         
         return contaService.listar();
